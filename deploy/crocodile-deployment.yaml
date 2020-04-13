@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crocodile-deployment
+  labels:
+    app: crocodile
+spec:
+  selector:
+    matchLabels:
+      app: crocodile
+  template:
+    metadata:
+      labels:
+        app: crocodile
+    spec:
+      containers:
+      - name: crocodile
+        image: brandiqa/crocodile-api
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
