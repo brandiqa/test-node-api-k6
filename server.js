@@ -19,8 +19,8 @@ const h = new Histogram({
 
 const Counter = promClient.Counter;
 const c = new Counter({
-  name: 'test_counter',
-  help: 'Example of a counter',
+  name: 'http_reqs',
+  help: 'number of http requests',
   labelNames: ['code'],
 });
 
