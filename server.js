@@ -85,6 +85,9 @@ promClient.collectDefaultMetrics({
 
 server.use(middlewares);
 server.use(router);
-server.listen(3000, () => {
-  console.log('JSON Server is running');
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log(
+    `Server listening to ${port}, metrics exposed on /metrics endpoint`,
+  );
 });

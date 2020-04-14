@@ -14,8 +14,22 @@ spec:
         app: crocodile
     spec:
       containers:
-      - name: crocodile
-        image: brandiqa/crocodile-api
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 3000
+        - name: crocodile
+          image: brandiqa/crocodile-api
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: crocodile-service
+spec:
+  type: NodePort
+  selector:
+    app: crocodile
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: http
