@@ -16,22 +16,22 @@ server.use((req, res, next) => {
   next() // continue to JSON Server router
 });
 
-const collectDefaultMetrics = promClient.collectDefaultMetrics;
-const Registry = promClient.Registry;
-const register = new Registry();
-collectDefaultMetrics({ register });
+// const collectDefaultMetrics = promClient.collectDefaultMetrics;
+// const Registry = promClient.Registry;
+// const register = new Registry();
+// collectDefaultMetrics({ register });
 
 
-server.get('/metrics', (req, res) => {
-  res.set('Content-Type', register.contentType);
-  res.end(register.metrics());
-});
+// server.get('/metrics', (req, res) => {
+//   res.set('Content-Type', register.contentType);
+//   res.end(register.metrics());
+// });
 
 server.use(middlewares);
 server.use(router);
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.log(
-    `Server listening to ${port}, metrics exposed on /metrics endpoint`,
+    `Server listening to http://localhost:${port}, metrics exposed on /metrics endpoint`,
   );
 });
