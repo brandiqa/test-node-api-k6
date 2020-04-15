@@ -8,11 +8,11 @@
     "dev": "nodemon server.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Michael Wanyoike",
+  "license": "MIT",
   "dependencies": {
-    "json-server": "^0.16.1",
-    "prom-client": "^12.0.0"
+    "@tailorbrands/node-exporter-prometheus": "^2.0.6",
+    "json-server": "^0.16.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"
