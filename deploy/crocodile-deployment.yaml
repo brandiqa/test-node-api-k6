@@ -5,11 +5,16 @@ metadata:
   labels:
     app: crocodile
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: crocodile
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3000"
+        prometheus.io/path: "/metrics"
       labels:
         app: crocodile
     spec:
