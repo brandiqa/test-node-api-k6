@@ -11,10 +11,6 @@ spec:
       app: crocodile
   template:
     metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "3000"
-        prometheus.io/path: "/metrics"
       labels:
         app: crocodile
     spec:
@@ -29,6 +25,10 @@ kind: Service
 apiVersion: v1
 metadata:
   name: crocodile-service
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "3000"
+    prometheus.io/path: "/metrics"
 spec:
   type: NodePort
   selector:

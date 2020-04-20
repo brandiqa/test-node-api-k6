@@ -1,9 +1,13 @@
-all: clean image upload apply
+all: purge image upload apply
 
-clean:
+purge:
 	kubectl delete service crocodile-service
 	kubectl delete deployment crocodile-deployment
 	microk8s ctr image rm docker.io/brandiqa/crocodile-api:latest
+clean:
+	kubectl delete service crocodile-service
+	# kubectl delete -n monitoring service crocodile-service
+	kubectl delete deployment crocodile-deployment
 image:
 	rm -rf build
 	mkdir build
@@ -13,5 +17,4 @@ upload:
 	microk8s ctr image import build/crocodile-api.tar
 apply:
 	kubectl apply -f deploy/crocodile-deployment.yaml
-	# kubectl expose deployment crocodile-deployment --name=crocodile-service --type=NodePort --port=3000
 	kubectl get services | grep crocodile
