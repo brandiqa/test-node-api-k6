@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: crocodile-deployment
+  name: crocodile-api
   labels:
-    app: crocodile
+    app: crocodile-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: crocodile
+      app: crocodile-api
   template:
     metadata:
       labels:
-        app: crocodile
+        app: crocodile-api
     spec:
       containers:
         - name: crocodile
@@ -32,7 +32,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: crocodile
+    app: crocodile-api
   ports:
     - port: 3000
       targetPort: 3000
