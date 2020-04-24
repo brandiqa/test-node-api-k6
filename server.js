@@ -1,8 +1,8 @@
 // server.js
 const jsonServer = require('json-server');
 const app = jsonServer.create();
-const router = jsonServer.router('db.json');
-const middlewares = jsonServer.defaults()
+const minDelay = 200;
+const maxDelay = 700;
 
 // Collect metrics
 const prometheusExporter = require('@tailorbrands/node-exporter-prometheus');
@@ -15,7 +15,16 @@ const promExporter = prometheusExporter(options);
 app.use(promExporter.middleware);
 app.get('/metrics', promExporter.metrics);
 
+const middlewares = jsonServer.defaults()
 app.use(middlewares);
+
+// Add a delay to /crocodiles requests only
+app.use('/crocodiles', function (req, res, next) {
+  let delay = Math.floor(Math.random() * (maxDelay - minDelay)) + minDelay;
+  setTimeout(next, delay)
+});
+
+const router = jsonServer.router('db.json');
 app.use(router);
 
 const port = process.env.PORT || 3000;
