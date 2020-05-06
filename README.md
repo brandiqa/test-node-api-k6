@@ -2,116 +2,101 @@
 
 Testing API Demo for K6 built with Node.js
 
-# Prerequisites
+## Prerequisites
+
+Please install the following software in your machine:
 
 - Node.js
 - Docker
-- Kubernetes: use `Minikube`
 - GNU Make
-
-The instructions written for this project are meant for `minikube`. However, they can be modified to adapt to a different type of Kubernetes implementation.
-
-# Setup
-
-## 1. Install Kubernetes - Minikube
-
-You'll need to install the following:
-
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-- [Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/), [Binary Releases](https://github.com/kubernetes/minikube/releases)
+- [Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 
-Here's a handy tutorial for [Ubuntu 18:04](https://computingforgeeks.com/how-to-install-minikube-on-ubuntu-18-04/) users.
+Here's a handy tutorial for [Ubuntu 18:04](https://computingforgeeks.com/how-to-install-minikube-on-ubuntu-18-04/) users. The instructions written for this project are meant for `minikube`. However, they can be modified to adapt to a different type of Kubernetes implementation.
 
-Once everything is installed and running, proceed to the next step:
+## ENVIRONMENT SETUP
 
-## 2. Enable Addons
+### 1. Configure Minikube
 
-Enable the following addons:
+Once your minikube is up and running, enable the following addons:
 
 ```bash
 $ minikube addons enable dashboard
-$ minikube addons enable metrics-server
+$ minikube addons enable ingress
+$ minikube addons enable ingress-dns
 ```
 
 To access dashboard, type the following command from a terminal: `minikube dashboard`
 
-### 3. Install InfluxDb
+### 2. Deploy Prometheus and Kube State Metrics Server
 
-Install [InfluxDB](https://v2.docs.influxdata.com/v2.0/get-started/). You can install it in your Kubernetes node:
+[Kube State metrics](https://github.com/kubernetes/kube-state-metrics) is a service which talks to Kubernetes API server to get all the details about all the API objects like deployments, pods, daemonsets etc. Basically it provides kubernetes API object metrics which you cannot get directly from native Kubernetes monitoring components.
 
-```bash
-kubectl apply -f https://raw.githubusercontent.com/influxdata/docs-v2/master/static/downloads/influxdb-k8-minikube.yaml
-# Ensure pod is running
-kubectl get pods -n influxdb
-# Ensure Service is running
-kubectl port-forward -n influxdb service/influxdb 9999:9999
-# Access dashboard from localhost
-kubectl port-forward -n influxdb service/influxdb 9999:9999
-```
+Follow the instructions on this [tutorial](https://devopscube.com/setup-kube-state-metrics/) to deploy Kube State Metrics.
 
-https://portal.influxdata.com/downloads/
+[Prometheus](https://prometheus.io/) is an open source monitoring framework that scrapes(collects) metrics data from various sources. It features a powerful query language that is used to extract information from the data it's collected which is stored in a time-series format.
 
-Open `http://localhost:9999/` in your browser.
+Follow the instructions on this [tutorial](https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/) to deploy Kube State Metrics.
 
-### 4. Install Helm
+### 3. Install InfluxDb and Grafana Locally
 
-Install [Helm](https://helm.sh/). Here are instructions for Ubuntu users:
+[InfluxDb]() is a database that stores time-series data. We'll use k6 to output metrics data to this database. Install 1.8 version.
 
-```bash
-# Install
-sudo snap install helm --classic
-# Add repo
-helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-# List all stable packages
-helm search repo stable
-```
+[todo explain Grafana and install instructions]
 
-### 5. Install Prometheus
+Copy the following JSON code[todo] to setup the *Crocodile API Metrics Dashboard*.
 
-[todo]
+### 4. Deploy Keda
 
-### 6. Install Grafana
+[todo- explain what Keda is]
 
-```bash
-# Enable Grafana to start on boot
-sudo systemctl daemon-reload
-sudo systemctl enable grafana-server
-### You can start grafana-server by executing
-sudo /bin/systemctl start grafana-server
-```
+Deploy Keda using these [instructions](https://keda.sh/docs/deploy/#yaml)
 
-## 2. Download Project
+## PROJECT SETUP
 
-Execute the following commands to download the project to your workspace:
+Execute the following commands to download and run the project in your workspace:
 
 ```bash
 git clone git@github.com:brandiqa/test-node-api-k6.git
-cd test-node-api-k6/api
-```
-
-## 3. Run Project (Dev)
-
-Execute the following commands to install package dependencies and run the project using Node.js:
-
-```bash
+cd test-node-api-k6
 npm i
 npm run dev
 ```
 
-Point your browser URL to `localhost:3000`. Any changes you make to your source code will restart the server.
-
-## 4. Deploy Project to Local Kubernetes
-
-I have written a GNU makefile that will automate the process of building and deploying this project to your Kubernetes cluster. Execute the following command:
+Point your browser URL to `localhost:4000`. Any changes you make to your source code will restart the server. You can also test the API from your command line like this:
 
 ```bash
-make
+curl http://localhost:4000/crocodile
 ```
 
-The deployment process should take about a minute or so. If successful, the last output you should see is:
+Next, deploy the application to Minikube, your Kubernetes node. Lucky for you, I've simplified the process. Just execute this one command:
 
 ```bash
-crocodile-service   NodePort    10.152.183.211   <none>        3000:31850/TCP   0s
+make image # build and upload docker image to minikube environment
+make apply # deploy crocodile-api and expose service
 ```
 
-The IP address will be different each time you deploy. In the above case, point your browser URL to: `10.152.183.211:3000`.
+If you don't have GNU make on you platform, simply execute the following commands in a new terminal:
+
+```bash
+# build and upload docker image to minikube environment
+eval $(minikube docker-env)
+docker image prune -f
+docker build -t brandiqa/crocodile-api .
+
+# deploy crocodile-api and expose service
+kubectl apply -f deploy/crocodile-deployment.yml
+```
+
+Execute the command to command `kubectl get pods` to confirm the pod is running.
+
+[todo screenshot]
+
+Execute the command to command `kubectl get services` to confirm the pod is running.
+
+## TESTING
+
+1. Run tests without Keda Scaling
+2. Run tests with Keda Scaling
+
+[todo write assumptions and conclusion]
