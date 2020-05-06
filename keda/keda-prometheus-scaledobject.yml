@@ -17,7 +17,7 @@ spec:
   - type: prometheus
     metadata:
       # Required
-      serverAddress: http://10.152.183.62:8080
+      serverAddress: http://10.103.240.12:8080
       metricName: access_frequency
-      threshold: '100'
+      threshold: '50'
       query: sum(rate(node_http_requests_total[2m]))

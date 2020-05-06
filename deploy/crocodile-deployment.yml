@@ -19,7 +19,7 @@ spec:
           image: brandiqa/crocodile-api
           imagePullPolicy: Never
           ports:
-            - containerPort: 3000
+            - containerPort: 4000
 ---
 kind: Service
 apiVersion: v1
@@ -27,14 +27,14 @@ metadata:
   name: crocodile-service
   annotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: "3000"
+    prometheus.io/port: "4000"
     prometheus.io/path: "/metrics"
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: crocodile-api
   ports:
-    - port: 3000
-      targetPort: 3000
+    - port: 4000
+      targetPort: 4000
       protocol: TCP
       name: http

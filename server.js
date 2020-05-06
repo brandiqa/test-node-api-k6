@@ -1,8 +1,8 @@
 // server.js
 const jsonServer = require('json-server');
 const app = jsonServer.create();
-const minDelay = 200;
-const maxDelay = 700;
+const minDelay = 30;
+const maxDelay = 250;
 
 // Collect metrics
 const prometheusExporter = require('@tailorbrands/node-exporter-prometheus');
@@ -27,7 +27,7 @@ app.use('/crocodiles', function (req, res, next) {
 const router = jsonServer.router('db.json');
 app.use(router);
 
-const port = process.env.PORT || 3000;
+const port = 4000;
 app.listen(port, () => {
   console.log(
     `JSON server listening on 127.0.0.1:${port}`,

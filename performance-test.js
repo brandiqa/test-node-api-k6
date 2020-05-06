@@ -2,10 +2,10 @@ import { check, sleep } from 'k6';
 import http from "k6/http";
 
 // export let options = {
-//   duration: "10m",
-//   vus: 300,
+//   duration: "3m",
+//   vus: 800,
 //   thresholds: {
-//     http_req_duration: ["p(95)<500"]
+//     http_req_duration: ["p(95)<700"]
 //   }
 // };
 
@@ -14,10 +14,10 @@ export let options = {
     { duration: '1m', target: 50 },
     { duration: '1m', target: 150 },
     { duration: '1m', target: 300 },
-    { duration: '1m', target: 500 },
-    { duration: '1m', target: 800 },
-    { duration: '1m', target: 1000 },
-    { duration: '30s', target: 5 },
+    { duration: '2m', target: 500 },
+    { duration: '2m', target: 800 },
+    { duration: '3m', target: 1200 },
+    { duration: '3m', target: 50 },
   ],
 };
 
@@ -26,5 +26,5 @@ export default function () {
   check(r, {
     'status is 200': r => r.status === 200,
   });
-  sleep(2);
+  sleep(3);
 }

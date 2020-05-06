@@ -6,27 +6,78 @@ Testing API Demo for K6 built with Node.js
 
 - Node.js
 - Docker
-- Kubernetes
+- Kubernetes: use `Minikube`
 - GNU Make
+
+The instructions written for this project are meant for `minikube`. However, they can be modified to adapt to a different type of Kubernetes implementation.
 
 # Setup
 
-## 1. Install & Configure Kubernetes
+## 1. Install Kubernetes - Minikube
 
-There are several implementations of Kubernetes that you can install on your local machine(laptop). My recommendation is to use [microk8s](https://microk8s.io/) since it's the easiest to setup and requires no virtual machine if you are using a Linux distro. Below are links for installation:
+You'll need to install the following:
 
-- [Windows](https://ubuntu.com/tutorials/install-microk8s-on-windows#1-overview)
-- [macOs](https://ubuntu.com/tutorials/install-microk8s-on-mac-os#1-overview)
-- [Linux](https://ubuntu.com/tutorials/install-a-local-kubernetes-with-microk8s#1-overview)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- [Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/), [Binary Releases](https://github.com/kubernetes/minikube/releases)
 
-After installation, you'll need to execute the following commands:
+Here's a handy tutorial for [Ubuntu 18:04](https://computingforgeeks.com/how-to-install-minikube-on-ubuntu-18-04/) users.
+
+Once everything is installed and running, proceed to the next step:
+
+## 2. Enable Addons
+
+Enable the following addons:
 
 ```bash
-# This applies only to Linux(check how the same can be done on Windows and Mac)
-sudo snap alias microk8s.kubectl kubectl
+$ minikube addons enable dashboard
+$ minikube addons enable metrics-server
+```
 
-# Enable prometheus
-microk8s.enable prometheus
+To access dashboard, type the following command from a terminal: `minikube dashboard`
+
+### 3. Install InfluxDb
+
+Install [InfluxDB](https://v2.docs.influxdata.com/v2.0/get-started/). You can install it in your Kubernetes node:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/influxdata/docs-v2/master/static/downloads/influxdb-k8-minikube.yaml
+# Ensure pod is running
+kubectl get pods -n influxdb
+# Ensure Service is running
+kubectl port-forward -n influxdb service/influxdb 9999:9999
+# Access dashboard from localhost
+kubectl port-forward -n influxdb service/influxdb 9999:9999
+```
+
+https://portal.influxdata.com/downloads/
+
+Open `http://localhost:9999/` in your browser.
+
+### 4. Install Helm
+
+Install [Helm](https://helm.sh/). Here are instructions for Ubuntu users:
+
+```bash
+# Install
+sudo snap install helm --classic
+# Add repo
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+# List all stable packages
+helm search repo stable
+```
+
+### 5. Install Prometheus
+
+[todo]
+
+### 6. Install Grafana
+
+```bash
+# Enable Grafana to start on boot
+sudo systemctl daemon-reload
+sudo systemctl enable grafana-server
+### You can start grafana-server by executing
+sudo /bin/systemctl start grafana-server
 ```
 
 ## 2. Download Project

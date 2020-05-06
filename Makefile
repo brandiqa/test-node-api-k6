@@ -1,20 +1,16 @@
-all: purge image upload apply
+all: delete image apply
 
-purge:
+delete:
 	kubectl delete service crocodile-service
-	kubectl delete deployment crocodile-deployment
-	microk8s ctr image rm docker.io/brandiqa/crocodile-api:latest
-clean:
-	kubectl delete service crocodile-service
-	# kubectl delete -n monitoring service crocodile-service
-	kubectl delete deployment crocodile-deployment
+	kubectl delete deployment crocodile-api
 image:
-	rm -rf build
-	mkdir build
+	eval $(minikube docker-env)
+	docker image prune
 	docker build -t brandiqa/crocodile-api .
-	docker save brandiqa/crocodile-api > build/crocodile-api.tar
-upload:
-	microk8s ctr image import build/crocodile-api.tar
 apply:
-	kubectl apply -f deploy/crocodile-deployment.yaml
+	kubectl apply -f deploy/crocodile-deployment.yml
 	kubectl get services | grep crocodile
+test:
+	curl 10.98.55.109:4000/crocodiles
+run:
+	HOSTNAME=10.98.55.109:4000/crocodiles k6 run -o influxdb=http://localhost:8086/k6 performance-test.js
